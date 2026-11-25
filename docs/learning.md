@@ -33,6 +33,7 @@
    - [7.2. Cell 11: Penyimpanan Model Artifacts (.pkl)](#72-cell-11-penyimpanan-model-artifacts-pkl)
    - [7.3. Cell 12: Pengujian Load Model dari File .pkl](#73-cell-12-pengujian-load-model-dari-file-pkl)
    - [7.4. Skrip Inspeksi Pipeline & Artefak Model (check_pipeline.py)](#74-skrip-inspeksi-pipeline--artefak-model-check_pipelinepy)
+   - [7.5. Implementasi Antarmuka Web Streamlit (app.py)](#75-implementasi-antarmuka-web-streamlit-apppy)
 8. [Panduan Pertanyaan Sidang Skripsi (FAQ Dosen Penguji)](#8-panduan-pertanyaan-sidang-skripsi-faq-dosen-penguji)
 
 ---
@@ -804,6 +805,33 @@ python check_pipeline.py
      - $P(\text{Suami Mandiri/Wiraswasta} \mid \text{Layak}) = \mathbf{0.0835}$ vs $P(\text{Suami Mandiri/Wiraswasta} \mid \text{Tidak Layak}) = \mathbf{0.0008}$ (**~100x lebih tinggi** pada kelas Layak).
 
 ---
+
+---
+
+### 7.5. Implementasi Antarmuka Web Streamlit (pp.py)
+
+Untuk mendemonstrasikan sistem klasifikasi secara visual dan interaktif kepada pengguna maupun penguji skripsi, telah dibuat aplikasi web berbasis Python murni di [app.py](../app.py).
+
+#### Cara Menjalankan Aplikasi Web:
+Buka terminal dan jalankan perintah berikut:
+`ash
+streamlit run app.py
+`
+Aplikasi akan otomatis terbuka pada browser di alamat http://localhost:8501.
+
+#### Fitur Utama pada Antarmuka Web:
+1. **Form Input Dua Kolom:**
+   - Kolom Calon Suami: Nama, Usia (15–85 tahun), Pekerjaan (dropdown), dan Pendidikan Terakhir (dropdown).
+   - Kolom Calon Istri: Nama, Usia (15–85 tahun), Pekerjaan (dropdown), dan Pendidikan Terakhir (dropdown).
+2. **Sidebar Preset Simulasi Cepat:**
+   - Menyediakan tombol pemuatan otomatis 4 skenario kasus nyata (Underage, Karyawan Swasta + IRT, Buruh + IRT, Pasangan PNS) untuk mempermudah demonstrasi tanpa perlu mengetik manual.
+3. **Keputusan Klasifikasi & Evaluasi Indikator:**
+   - Banner Hijau (**Layak Menikah**) atau Merah (**Tidak Layak Menikah**).
+   - Rincian penjelasan pemenuhan batas usia UU No. 16/2019 dan status kesiapan nafkah/ekonomi.
+4. **Visualisasi Probabilitas Posterior Naive Bayes:**
+   - Menampilkan persentase peluang kelas Layak vs Tidak Layak lengkap dengan indikator *progress bar*.
+5. **Panel Debug Fitur Biner:**
+   - Menampilkan fitur aktif biner (1) hasil One-Hot Encoding dari input yang dimasukkan.
 
 ## 8. Panduan Pertanyaan Sidang Skripsi (FAQ Dosen Penguji)
 
