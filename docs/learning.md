@@ -32,6 +32,7 @@
    - [7.1. Cell 10: Simulasi Klasifikasi Kasus Nyata](#71-cell-10-simulasi-klasifikasi-kasus-nyata)
    - [7.2. Cell 11: Penyimpanan Model Artifacts (.pkl)](#72-cell-11-penyimpanan-model-artifacts-pkl)
    - [7.3. Cell 12: Pengujian Load Model dari File .pkl](#73-cell-12-pengujian-load-model-dari-file-pkl)
+   - [7.4. Skrip Inspeksi Pipeline & Artefak Model (check_pipeline.py)](#74-skrip-inspeksi-pipeline--artefak-model-check_pipelinepy)
 8. [Panduan Pertanyaan Sidang Skripsi (FAQ Dosen Penguji)](#8-panduan-pertanyaan-sidang-skripsi-faq-dosen-penguji)
 
 ---
@@ -769,6 +770,38 @@ pred_pkl = loaded_model.predict(test_X)[0]
 print(f'Verifikasi Hasil Klasifikasi dari .pkl: {pred_pkl}')
 ```
 - Memastikan bahwa model yang disimpan ke dalam file `.pkl` dapat dimuat kembali (*load*) secara independen dan menghasilkan klasifikasi yang sama persis saat diimplementasikan ke aplikasi web nanti.
+
+---
+
+### 7.4. Skrip Inspeksi Pipeline & Artefak Model (`check_pipeline.py`)
+
+Untuk membedah, memverifikasi struktur biner, dan melihat isi matematis di dalam ketiga file `.pkl` tanpa harus membuka file notebook, telah disediakan skrip mandiri [check_pipeline.py](../check_pipeline.py).
+
+#### Cara Menjalankan:
+```bash
+python check_pipeline.py
+```
+
+#### Struktur & Informasi yang Dibongkar oleh Skrip:
+1. **Pemeriksaan `features.pkl`:**
+   - Menyimpan objek bertipe `list` berisi 6 string urutan fitur:
+     `['Kategori_Usia_Suami', 'Kategori_Usia_Istri', 'Kategori_Pekerjaan_Suami', 'Kategori_Pekerjaan_Istri', 'Pendidikan Suami', 'Pendidikan Istri']`.
+   - **Tujuan Teknis:** Memastikan urutan kolom data input dari antarmuka web selalu selaras dengan urutan pembelajaran model.
+
+2. **Pemeriksaan `preprocessor.pkl` (`OneHotEncoder`):**
+   - Atribut `encoder.categories_`: Menampilkan seluruh nilai kategori sah yang dipelajari pada data latih (4 kategori usia suami, 4 usia istri, 4 pekerjaan suami, 4 pekerjaan istri, 8 pendidikan suami, 8 pendidikan istri).
+   - Atribut `encoder.get_feature_names_out()`: Memetakan 6 fitur kategorikal tersebut menjadi tepat **32 kolom biner (0 dan 1)**.
+
+3. **Pemeriksaan `naive_bayes.pkl` (`MultinomialNB`):**
+   - **Kelas Target:** `['Layak', 'Tidak Layak']`.
+   - **Sampel Latih:** 300 sampel Layak (21.31%) dan 1.108 sampel Tidak Layak (78.69%) dari total 1.408 data latih.
+   - **Prior Probability P(Kelas):**
+     - $P(\text{Layak}) = 0.2131$ (21.31%)
+     - $P(\text{Tidak Layak}) = 0.7869$ (78.69%)
+   - **Likelihood Matrix $P(x_i \mid C_k)$:**  
+     Matriks berukuran $2 \times 32$ yang menyimpan bobot kondisional setiap fitur. Skrip membuktikan secara matematis mengapa status pekerjaan suami sangat menentukan hasil:
+     - $P(\text{Suami Tetap/Mapan} \mid \text{Layak}) = \mathbf{0.0786}$ vs $P(\text{Suami Tetap/Mapan} \mid \text{Tidak Layak}) = \mathbf{0.0013}$ (**~60x lebih tinggi** pada kelas Layak).
+     - $P(\text{Suami Mandiri/Wiraswasta} \mid \text{Layak}) = \mathbf{0.0835}$ vs $P(\text{Suami Mandiri/Wiraswasta} \mid \text{Tidak Layak}) = \mathbf{0.0008}$ (**~100x lebih tinggi** pada kelas Layak).
 
 ---
 
