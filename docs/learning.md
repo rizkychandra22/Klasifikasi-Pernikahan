@@ -1,5 +1,5 @@
 # Dokumentasi & Panduan Pembelajaran Pipeline Machine Learning
-## Klasifikasi Kelayakan Pernikahan Berdasarkan Data KUA (Nyalindung & Jampangtengah)
+## Klasifikasi Kelayakan Pernikahan Berdasarkan Data KUA (Nyalindung)
 **Program Studi Teknik Informatika — Masket-TI22**
 
 ---
